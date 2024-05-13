@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
 import { Button, TextField, Grid, Paper } from '@mui/material';
-import { useHistory, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { loginuser } from '../../helpers/auth';
 
 
 const LoginPage = () => {
     const navigate = useNavigate();
-    const [user, setUser] = useState({ "username": "", "password": "" });
-    const history = useHistory();
+    const [user, setUser] = useState({ "login_name": "", "password": "" });
+
+    const handleChange = (e) => {
+        setUser({ ...user, [e.target.name]: e.target.value });
+    };
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('/api/login', {
+            const response = await fetch('http://127.0.0.1:8081/api/user/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -25,7 +28,8 @@ const LoginPage = () => {
 
             const data = await response.json();
             loginuser(data); // loginuser function has token as parameter
-            navigate('/');
+            console.log('Login successful:', data.token);
+            navigate('/user');
         } catch (error) {
             console.error('Failed to login:', error);
         }
@@ -36,16 +40,18 @@ const LoginPage = () => {
             <Grid item xs={12}>
                 <Paper>
                     <TextField
-                        label="Username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        label="Login Name"
+                        name="login_name"
+                        value={user.login_name}
+                        onChange={handleChange}
                     />
                     <TextField
                         label="Password"
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        name="password"
+                        value={user.password}
+                        onChange={handleChange}
                     />
+                    <br />
                     <Button onClick={handleLogin}>Login</Button>
                 </Paper>
             </Grid>

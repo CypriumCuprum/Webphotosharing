@@ -15,10 +15,13 @@ import { auth } from "../../helpers/auth";
 function UserDetail() {
   const { userId } = useParams();
   const [User_bit, setUser] = useState({});
-  const { authentication, setauth } = useState(false);
+  const [authentication, setauth] = useState(false);
   // const users = models.userListModel();
   useEffect(() => {
-    setauth(auth());
+    const check = auth();
+    if (check) {
+      setauth(true);
+    }
     const fetchData = async () => {
       try {
         const fetchUser = await fetchModel(`/user/${userId}`);

@@ -2,21 +2,18 @@ import "./App.css";
 import React from "react";
 import { useState, useEffect } from "react";
 import { Grid, Paper } from "@mui/material";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 
 import TopBar from "./components/TopBar";
 import UserDetail from "./components/UserDetail";
 import UserList from "./components/UserList";
 import UserPhotos from "./components/UserPhotos";
 import LoginPage from "./components/LoginRegister";
-import auth from "./helpers/auth";
+import { auth } from "./helpers/auth";
 
 const App = () => {
   // Check if the user is authenticated
-  const [authenticated, setAuthenticated] = useState(false);
-  useEffect(() => {
-    setAuthenticated(auth());
-  }, []);
+  const checkAuth = auth();
 
   return (
     <Router>
@@ -28,11 +25,7 @@ const App = () => {
           <div className="main-topbar-buffer" />
           <Grid item sm={3}>
             <Paper className="main-grid-item">
-              {authenticated ?
-                <Route path="/user/list" element={<UserList />} />
-                :
-                <Redirect to="/login" />
-              }
+              <UserList />
             </Paper>
           </Grid>
           <Grid item sm={9}>
@@ -41,6 +34,7 @@ const App = () => {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/user/:userId" element={<UserDetail />} />
                 <Route path="/photo/:userId" element={<UserPhotos />} />
+                <Route path="/" element={<Navigate to="/user" />} />
               </Routes>
             </Paper>
           </Grid>

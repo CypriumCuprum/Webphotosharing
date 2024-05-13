@@ -6,33 +6,26 @@ import { useLocation } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { fetchModel } from "../../lib/fetchModelData";
-import { auth } from "../../helpers/auth";
+import { auth, logout } from "../../helpers/auth";
 /**
  * Define TopBar, a React component of Project 4.
  */
 function TopBar() {
-  const [user, setUser] = useState();
-  const [parent, setparent] = useState();
+  const [user, setUser] = useState("");
+  const [parent, setparent] = useState("");
   const location = useLocation();
-  const { authenticated, setAuthenticated } = useState(false);
+  const checkAuth = auth();
   // const users = models.userListModel();
+  const hanleLogout = () => {
+    logout();
+  }
+
   useEffect(() => {
-    setAuthenticated(auth());
     const parentPath = location.pathname.split("/").at(-2);
     setparent(parentPath);
-    const basePath = location.pathname.split("/").at(-1);
-    const fetchData = async () => {
-      try {
-        const fetchUser = await fetchModel(`/user/${basePath}`);
-        setUser(fetchUser.first_name + " " + fetchUser.last_name);
-        // setData(result);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchData();
-    // const fetchUser = users.find((item) => item._id === user.userId)
-    // setUser(fetchUser);
+    if (checkAuth) {
+      setUser(checkAuth.username);
+    }
   }, [location]);
   return (
     <AppBar className="topbar-appBar" position="absolute">
@@ -40,11 +33,11 @@ function TopBar() {
         <Typography variant="h5" color="inherit">
           PHOTOSHARE
         </Typography>
-        {authenticated ?
+        {checkAuth ?
           <>
-            {parent === "user" && (
+            {parent !== "photo" && (
               <Typography variant="h5" marginLeft="auto">
-                {user}
+                {user + "1"}
               </Typography>
             )}
             {parent === "photo" && (
@@ -52,6 +45,9 @@ function TopBar() {
                 {"Photos of" + " " + user}
               </Typography>
             )}
+            <Button component={Link} to="/login" color="inherit" onClick={hanleLogout}>
+              Log out
+            </Button>
           </>
           :
           <>

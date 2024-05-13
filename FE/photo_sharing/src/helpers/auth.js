@@ -1,13 +1,13 @@
 const auth = () => {
-    return localStorage.getItem('token');
+    return JSON.parse(localStorage.getItem('user'));
 }
 
-const loginuser = (token) => {
-    localStorage.setItem('token', token);
+const loginuser = (data) => {
+    localStorage.setItem('user', JSON.stringify(data));
 }
 
 const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('user');
 }
 
 export { auth, loginuser, logout };
