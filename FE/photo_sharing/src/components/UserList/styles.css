@@ -1,0 +1,28 @@
+.bubble {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    text-align: center;
+    line-height: 10px;
+    margin-left: 5px;
+    padding: 2px 2px;
+    border-radius: 50%;
+    background-color: #f00;
+    color: #fff;
+}
+
+.bubbleContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    margin-left: auto;
+}
+
+.green-bubble {
+    background-color: #008000;
+}
+
+.red-bubble {
+    background-color: #f00;
+}
