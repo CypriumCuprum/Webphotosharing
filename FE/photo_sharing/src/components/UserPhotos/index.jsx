@@ -66,7 +66,7 @@ function UserPhotos() {
   const handlechnage = (e) => {
     console.log(e.target.value);
     const comment = e.target.value;
-    setComments(comment);
+    comment.trim() === "" ? setComments("") : setComments(comment);
   }
 
   const newcomment = (userlogin, photoId) => {
