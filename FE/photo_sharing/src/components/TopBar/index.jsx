@@ -8,6 +8,8 @@ import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { fetchModel } from "../../lib/fetchModelData";
 import { auth, logout } from "../../helpers/auth";
+import { databaseURL } from "../../helpers/config";
+import axios from "axios";
 /**
  * Define TopBar, a React component of Project 4.
  */
@@ -15,14 +17,49 @@ function TopBar() {
   const [username, setUser] = useState("");
   const [parent, setparent] = useState("");
   const [base, setBase] = useState("");
-  const [uploadInput, setUploadInput] = useState("");
+  const [uploadInput, setUploadInput] = useState(null);
   const location = useLocation();
   const checkAuth = auth();
   // const users = models.userListModel();
 
   const handleSubmitPhoto = (e) => {
-    e.preventDefault();
+    e.preventDefault(); // prevent default behavior
+    const imageFile = uploadInput; // get image file
+    setUploadInput(null); // clear upload button
+
+    if (imageFile.size > 0) {
+      // check if the file content is already uploaded
+      // create a DOM form and add the file to it under the name uploadedphoto
+      const domForm = new FormData();
+      domForm.append("uploadedphoto", imageFile);
+      // send POST request to server to add uploaded photo
+      console.log(domForm.get("uploadedphoto"));
+      // axios
+      //   .post(`${databaseURL}/photo/new`, domForm)
+      //   .then((response) => {
+      //     if (response.status === 200) {
+      //       console.log("** TopBar: photo successfully uploaded **");
+      //       this.props.onPhotoUpload(); // notify parent component
+      //     }
+      //   })
+      //   .catch(err => console.log("Error: photo uploaded error ", err));
+      const fetchData = async () => {
+        const response = await fetch(`${databaseURL}/photo/new/${checkAuth.userId}`, {
+          method: "POST",
+          headers: {
+            "bearer": `Bearer ${checkAuth.token}`,
+          },
+          body: domForm,
+        });
+        if (response.ok) {
+          console.log("** TopBar: photo successfully uploaded **");
+          // this.props.onPhotoUpload(); // notify parent component
+        }
+      }
+      fetchData();
+    }
   }
+
 
   const handleUpload = (e) => {
     let file = e.target.files[0];
@@ -40,7 +77,7 @@ function TopBar() {
   useEffect(() => {
     const parentPath = location.pathname.split("/").at(-2);
     const basePath = location.pathname.split("/").at(-1);
-    if (checkAuth && basePath !== "login" && basePath !== "register") {
+    if (checkAuth && basePath !== "login" && basePath !== "register" && basePath !== "photo" && basePath !== "user") {
       setparent(parentPath);
       setBase(basePath);
       const fetchData = async () => {
@@ -58,7 +95,7 @@ function TopBar() {
           PHOTOSHARE
         </Typography>
         {
-          checkAuth.userId === base &&
+          checkAuth && checkAuth.userId === base &&
           (
 
             <form onSubmit={handleSubmitPhoto} style={{ flexGrow: 1 }}>

@@ -4,10 +4,10 @@
  * @param {string} url      The URL to issue the GET request.
  *
  */
+import { databaseURL } from "../helpers/config";
 function fetchModel(params) {
   // Default options are marked with *
-  const base_url = "http://127.0.0.1:8081/api";
-  const url = base_url + params;
+  const url = databaseURL + params;
   return fetch(url)
     .then((response) => {
       if (!response.ok) {

@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { fetchModel } from "../../lib/fetchModelData";
 import { auth } from "../../helpers/auth";
+import { databaseURL } from "../../helpers/config";
 /**
  * Define UserPhotos, a React component of Project 4.
  */
@@ -15,7 +16,7 @@ function userLink(user) {
   const fullname = user.first_name + " " + user.last_name;
   return <Link className="User_cmt" to={"/user/" + user._id}>{fullname}</Link>;
 }
-function cmtphoto(comments) {
+function cmtphoto(comments, photoId) {
   // console.log("comment" +comments);
   let formattedComments = [];
   if (comments) {
@@ -34,12 +35,9 @@ function cmtphoto(comments) {
   }
 
   //return footer
-  return <div className="userPhotos-comments">{formattedComments}</div>;
+  return <div key={photoId + "allcomment"} className="userPhotos-comments">{formattedComments}</div>;
 }
 
-function newcomment(userlogin, photoId) {
-
-}
 
 function UserPhotos() {
   const { userId } = useParams();
@@ -75,8 +73,8 @@ function UserPhotos() {
     const handleClick = async () => {
       console.log("new comment");
       try {
-        const comment = document.getElementById(photoId).value;
-        const url = `http://127.0.0.1:8081/api/comment/addnewcomment`;
+        const comment = document.getElementById(photoId + userlogin.userId).value;
+        const url = `${databaseURL}/comment/addnewcomment`;
         const response = await fetch(url, {
           method: "POST",
           headers: {
@@ -99,11 +97,11 @@ function UserPhotos() {
             return photo;
           }
           ));
-          const TextField = document.getElementById(photoId);
+          const TextField = document.getElementById(photoId + userlogin.userId);
           TextField.value = "";
         }
-        const data = await response.json();
-        console.log("comment added:", data);
+        // const data = await response.json();
+        // console.log("comment added:", data);
       }
       catch (error) {
         console.error("Failed to add comment:", error);
@@ -114,7 +112,7 @@ function UserPhotos() {
       return (
         <>
           <div className="newcomment">
-            <TextField id={photoId} label="Add new comment" multiline variant="outlined" fullWidth onChange={handlechnage} />
+            <TextField id={photoId + userlogin.userId} label="Add new comment" multiline variant="outlined" fullWidth onChange={handlechnage} />
           </div>
           <Button onClick={handleClick} disabled={!commentcheck}>Submit</Button>
         </>
@@ -135,11 +133,11 @@ function UserPhotos() {
       <div>
         {photos.map((ob) => (
           <div key={ob._id} className="photoContainer">
-            <img src={require(`../../images/${ob.file_name}`)} className="photo" />
+            <img src={`${databaseURL}/photo/image/${ob.file_name}`} className="photo" />
             <br />
             <b>Date: {ob.date_time}</b>
             <b>Comment:</b>
-            {cmtphoto(ob.comments)}
+            {cmtphoto(ob.comments, ob._id)}
             <br />
             {newcomment(userlogin, ob._id)}
 

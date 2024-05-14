@@ -3,7 +3,7 @@ import { Button, TextField, Grid, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { loginuser } from '../../helpers/auth';
 import { auth } from '../../helpers/auth';
-
+import { databaseURL } from '../../helpers/config';
 const LoginPage = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState({ "login_name": "", "password": "" });
@@ -19,7 +19,7 @@ const LoginPage = () => {
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:8081/api/user/login', {
+            const response = await fetch(`${databaseURL}/user/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
