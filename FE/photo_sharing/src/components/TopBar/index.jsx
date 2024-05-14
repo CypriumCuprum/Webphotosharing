@@ -77,13 +77,15 @@ function TopBar() {
   useEffect(() => {
     const parentPath = location.pathname.split("/").at(-2);
     const basePath = location.pathname.split("/").at(-1);
-    if (checkAuth && basePath !== "login" && basePath !== "register" && basePath !== "photo" && basePath !== "user") {
+    if (checkAuth && basePath !== "login" && basePath !== "register" && basePath !== "photo" && basePath !== "user" && basePath !== null) {
       setparent(parentPath);
       setBase(basePath);
       const fetchData = async () => {
         const response = await fetchModel(`/user/${basePath}`);
-        const name = response.first_name + " " + response.last_name;
-        setUser(name);
+        if (Object(response).hasOwnProperty("first_name") && Object(response).hasOwnProperty("last_name")) {
+          const name = response.first_name + " " + response.last_name;
+          setUser(name);
+        }
       };
       fetchData();
     }

@@ -14,7 +14,15 @@ import { auth } from "../../helpers/auth";
  */
 function UserDetail() {
   const { userId } = useParams();
-  const [User_bit, setUser] = useState({});
+  const [User_bit, setUser] = useState({
+    _id: "",
+    first_name: "",
+    last_name: "",
+    login_name: "",
+    password: "",
+    location: "",
+    description: "",
+  });
   const [authentication, setauth] = useState(false);
   // const users = models.userListModel();
   useEffect(() => {
@@ -25,7 +33,9 @@ function UserDetail() {
     const fetchData = async () => {
       try {
         const fetchUser = await fetchModel(`/user/${userId}`);
-        setUser(fetchUser);
+        if (fetchUser) {
+          setUser(fetchUser);
+        }
         // setData(result);
       } catch (error) {
         console.error("Error fetching data:", error);
