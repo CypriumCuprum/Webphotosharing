@@ -13,8 +13,7 @@ const getUserDict = (token, user) => {
 
 const buildToken = (user) => {
   return {
-    userId: user._id,
-    isAdmin: user.isAdmin,
+    userId: user._id
   };
 };
 

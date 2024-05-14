@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, TextField, Grid, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { loginuser } from '../../helpers/auth';
-
+import { auth } from '../../helpers/auth';
 
 const LoginPage = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState({ "login_name": "", "password": "" });
-
+    const checkAuth = auth();
+    useEffect(() => {
+        if (checkAuth) {
+            navigate(`/user/${checkAuth.userId}`);
+        }
+    }, [checkAuth, navigate]);
     const handleChange = (e) => {
         setUser({ ...user, [e.target.name]: e.target.value });
     };
@@ -29,33 +34,36 @@ const LoginPage = () => {
             const data = await response.json();
             loginuser(data); // loginuser function has token as parameter
             console.log('Login successful:', data.token);
-            navigate('/user');
+            navigate(`/user/${data.userId}`);
         } catch (error) {
             console.error('Failed to login:', error);
         }
     };
 
     return (
-        <Grid container spacing={2}>
-            <Grid item xs={12}>
-                <Paper>
-                    <TextField
-                        label="Login Name"
-                        name="login_name"
-                        value={user.login_name}
-                        onChange={handleChange}
-                    />
-                    <TextField
-                        label="Password"
-                        name="password"
-                        value={user.password}
-                        onChange={handleChange}
-                    />
-                    <br />
-                    <Button onClick={handleLogin}>Login</Button>
-                </Paper>
-            </Grid>
-        </Grid>
+
+        <Paper>
+            <TextField
+                label="Login Name"
+                name="login_name"
+                value={user.login_name}
+                onChange={handleChange}
+            />
+            <TextField
+                label="Password"
+                name="password"
+                value={user.password}
+                onChange={handleChange}
+            />
+            <Button variant="contained"
+                color="primary"
+                onClick={handleLogin}
+                style={{
+                    marginTop: '10px',
+                    width: '100%',
+                }}>Login</Button>
+        </Paper>
+
     );
 };
 

@@ -1,11 +1,12 @@
 import React from "react";
-import { Typography } from "@mui/material";
+import { Typography, TextField, Button } from "@mui/material";
 
 import "./styles.css";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { fetchModel } from "../../lib/fetchModelData";
+import { auth } from "../../helpers/auth";
 /**
  * Define UserPhotos, a React component of Project 4.
  */
@@ -36,10 +37,16 @@ function cmtphoto(comments) {
   return <div className="userPhotos-comments">{formattedComments}</div>;
 }
 
+function newcomment(userlogin, photoId) {
+
+}
+
 function UserPhotos() {
   const { userId } = useParams();
+  const userlogin = auth();
   // const id = user.userId;
   const [photos, setphoto] = useState([]);
+  const [commentcheck, setComments] = useState("");
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -58,6 +65,69 @@ function UserPhotos() {
     fetchData();
   }, [userId]);
   // console.log(photos)
+  const handlechnage = (e) => {
+    console.log(e.target.value);
+    const comment = e.target.value;
+    setComments(comment);
+  }
+
+  const newcomment = (userlogin, photoId) => {
+    const handleClick = async () => {
+      console.log("new comment");
+      try {
+        const comment = document.getElementById(photoId).value;
+        const url = `http://127.0.0.1:8081/api/comment/addnewcomment`;
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "bearer": `Bearer ${userlogin.token}`,
+          },
+          body: JSON.stringify({ comment: comment, photoId: photoId, userId: userlogin.userId }),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to add comment");
+        }
+        else {
+          const newComment = await response.json();
+          const user = await fetchModel(`/user/${newComment.user_id}`);
+          newComment.user = user;
+          setphoto(photos.map((photo) => {
+            if (photo._id === photoId) {
+              photo.comments.push(newComment);
+            }
+            return photo;
+          }
+          ));
+          const TextField = document.getElementById(photoId);
+          TextField.value = "";
+        }
+        const data = await response.json();
+        console.log("comment added:", data);
+      }
+      catch (error) {
+        console.error("Failed to add comment:", error);
+      }
+      // const comment = document.getElementById("newcomment").value;
+    };
+    if (userlogin) {
+      return (
+        <>
+          <div className="newcomment">
+            <TextField id={photoId} label="Add new comment" multiline variant="outlined" fullWidth onChange={handlechnage} />
+          </div>
+          <Button onClick={handleClick} disabled={!commentcheck}>Submit</Button>
+        </>
+      )
+    }
+    else {
+      return (
+        <div>
+          <p>Log in to add a comment</p>
+        </div>
+      )
+    }
+  }
 
   return (
     <div className="userPhotos">
@@ -67,13 +137,15 @@ function UserPhotos() {
           <div key={ob._id} className="photoContainer">
             <img src={require(`../../images/${ob.file_name}`)} className="photo" />
             <br />
-            <b>Date:</b> {ob.date_time}
-            <br />
+            <b>Date: {ob.date_time}</b>
             <b>Comment:</b>
             {cmtphoto(ob.comments)}
             <br />
+            {newcomment(userlogin, ob._id)}
+
           </div>
         ))}
+
       </div>
     </div>
   );

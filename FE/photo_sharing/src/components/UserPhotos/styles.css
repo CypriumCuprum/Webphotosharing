@@ -43,3 +43,13 @@
     font-size: 1.2em;
     font-weight: bold;
 }
+
+.newComment {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+    background: #e2d6d6;
+    border-radius: 10px 10px 10px 10px;
+    margin: 2px;
+}
