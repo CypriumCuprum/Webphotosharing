@@ -49,6 +49,7 @@ function UserList() {
       }
     };
     fetchData();
+
   }, []);
 
   return (
@@ -63,8 +64,8 @@ function UserList() {
                 </Link>
               </div>
               <div className="bubble-container" >
-                <span className="bubble green-bubble">{photoscnt[item._id]}</span>
-                <span className="bubble red-bubble">{commentscnt[item._id]}</span>
+                <span className="bubble green-bubble">{photoscnt[item._id] || 0}</span>
+                <span className="bubble red-bubble">{commentscnt[item._id] || 0}</span>
               </div>
             </ListItem>
             <Divider />

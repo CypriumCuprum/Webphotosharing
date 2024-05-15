@@ -25,7 +25,7 @@ function cmtphoto(comments, photoId) {
         {userLink(comment.user)}
         {" \t" + comment.comment}
         <br />
-        <div style={{ color: "rgb(128, 128, 128)" }}>
+        <div style={{ color: "rgb(128, 128, 128)", fontSize: "15px" }}>
           {"---\t"}
           {"At:\t"}
           {comment.date_time}
@@ -45,6 +45,7 @@ function UserPhotos() {
   // const id = user.userId;
   const [photos, setphoto] = useState([]);
   const [commentcheck, setComments] = useState("");
+  const [photoname, setPhotoname] = useState("");
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -53,8 +54,15 @@ function UserPhotos() {
         // const fetchUser = result.find((item) => item._id === user.userId)
         // setUser(result);
         // console.log("result"+result)
-        setphoto(result);
-        console.log(result);
+        const url2 = `/user/${userId}`;
+        const user = await fetchModel(url2);
+        if (user) {
+          setPhotoname(user.first_name);
+        }
+        if (result) {
+          setphoto(result);
+          console.log(result);
+        }
         // setData(result);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -129,8 +137,8 @@ function UserPhotos() {
 
   return (
     <div className="userPhotos">
-      <Typography variant="h5">PHOTOS</Typography>
-      <div>
+      <Typography variant="h3">Photos of {photoname}</Typography>
+      <Typography>
         {photos.map((ob) => (
           <div key={ob._id} className="photoContainer">
             <img src={`${databaseURL}/photo/image/${ob.file_name}`} className="photo" />
@@ -144,7 +152,7 @@ function UserPhotos() {
           </div>
         ))}
 
-      </div>
+      </Typography>
     </div>
   );
 }

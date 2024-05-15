@@ -1,5 +1,6 @@
+import './styles.css';
 import React, { useEffect, useState } from 'react';
-import { Button, TextField, Grid, Paper } from '@mui/material';
+import { Button, TextField, Grid, Paper, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { loginuser } from '../../helpers/auth';
 import { auth } from '../../helpers/auth';
@@ -42,26 +43,24 @@ const LoginPage = () => {
 
     return (
 
-        <Paper>
+        <Paper component="form" className='FormLogin'>
+            <Typography variant="h4">Login</Typography>
             <TextField
                 label="Login Name"
                 name="login_name"
-                value={user.login_name}
+                // value={user.login_name}
                 onChange={handleChange}
             />
             <TextField
                 label="Password"
                 name="password"
-                value={user.password}
+                // value={user.password}
                 onChange={handleChange}
             />
             <Button variant="contained"
                 color="primary"
                 onClick={handleLogin}
-                style={{
-                    marginTop: '10px',
-                    width: '100%',
-                }}>Login</Button>
+            >Login</Button>
         </Paper>
 
     );

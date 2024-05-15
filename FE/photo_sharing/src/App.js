@@ -9,6 +9,7 @@ import UserDetail from "./components/UserDetail";
 import UserList from "./components/UserList";
 import UserPhotos from "./components/UserPhotos";
 import LoginPage from "./components/LoginRegister";
+import Register from "./components/Register";
 import { auth } from "./helpers/auth";
 
 const App = () => {
@@ -17,12 +18,12 @@ const App = () => {
 
   return (
     <Router>
-      <div>
+      <Paper>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <TopBar />
           </Grid>
-          <div className="main-topbar-buffer" />
+          <Paper className="main-topbar-buffer" />
           <Grid item sm={3}>
             <Paper className="main-grid-item">
               <UserList />
@@ -31,15 +32,16 @@ const App = () => {
           <Grid item sm={9}>
             <Paper className="main-grid-item">
               <Routes>
+                <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/user/:userId" element={<UserDetail />} />
                 <Route path="/photo/:userId" element={<UserPhotos />} />
-                <Route path="/" element={<Navigate to="/user" />} />
+                <Route path="/" element={<Navigate to="/login" />} />
               </Routes>
             </Paper>
           </Grid>
         </Grid>
-      </div>
+      </Paper>
     </Router>
   );
 };

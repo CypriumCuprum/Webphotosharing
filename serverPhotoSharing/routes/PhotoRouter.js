@@ -26,7 +26,7 @@ router.get("/:id", async (request, response) => {
     try {
         const projection = '_id first_name last_name';
         const userphoto = await User.findOne({ "_id": user_id }).select(projection).exec();
-        const photos = await Photo.find({ "user_id": user_id }).exec();
+        const photos = await Photo.find({ "user_id": user_id }).sort('-date_time').exec();
         const photosWithComments = await Promise.all(photos.map(async (photo) => {
             const comments = await Promise.all(photo.comments.map(async (comment) => {
                 const user = await User.findOne({ "_id": comment.user_id }).select(projection).exec();

@@ -4,12 +4,11 @@ import { CloudUpload, AddAPhotoOutlined } from "@mui/icons-material";
 import { useState, useEffect } from "react";
 import "./styles.css";
 import { useLocation } from "react-router-dom";
-import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { fetchModel } from "../../lib/fetchModelData";
 import { auth, logout } from "../../helpers/auth";
 import { databaseURL } from "../../helpers/config";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
 /**
  * Define TopBar, a React component of Project 4.
  */
@@ -20,6 +19,7 @@ function TopBar() {
   const [uploadInput, setUploadInput] = useState(null);
   const location = useLocation();
   const checkAuth = auth();
+  const navigate = useNavigate();
   // const users = models.userListModel();
 
   const handleSubmitPhoto = (e) => {
@@ -57,12 +57,16 @@ function TopBar() {
         }
       }
       fetchData();
+      navigate(`/photo/${checkAuth.userId}`);
     }
   }
 
 
   const handleUpload = (e) => {
     let file = e.target.files[0];
+    if (file.size === 0) {
+      return;
+    }
     let reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = () => {
@@ -92,56 +96,58 @@ function TopBar() {
   }, [location]);
   return (
     <AppBar className="topbar-appBar" position="absolute">
-      <Toolbar>
+      <Toolbar className="toolbar">
         <Typography variant="h5" color="inherit">
           PHOTOSHARE
         </Typography>
-        {
-          checkAuth && checkAuth.userId === base &&
-          (
+        <Typography className="combo2">
+          {
+            checkAuth && checkAuth.userId === base &&
+            (
 
-            <form onSubmit={handleSubmitPhoto} style={{ flexGrow: 1 }}>
-              <Button component="label" title="Upload Photo" color="inherit">
-                <AddAPhotoOutlined fontSize="large" />
-                <input type="file" accept="image/*" hidden onChange={handleUpload} />
+              <form onSubmit={handleSubmitPhoto} style={{ flexGrow: 1 }}>
+                <Button component="label" title="Upload Photo" color="inherit">
+                  <AddAPhotoOutlined fontSize="large" />
+                  <input type="file" accept="image/*" hidden onChange={handleUpload} />
 
-              </Button>
-              {uploadInput && (
-                <IconButton type="submit">
-                  <CloudUpload style={{ color: "#fec7d7" }} fontSize="large" />
-                </IconButton>
+                </Button>
+                {uploadInput && (
+                  <IconButton type="submit">
+                    <CloudUpload style={{ color: "#fec7d7" }} fontSize="large" />
+                  </IconButton>
+                )}
+              </form>
+
+
+            )
+          }
+          {checkAuth ?
+            <>
+              {parent === "user" && (
+                <Typography variant="h5" marginLeft="auto">
+                  {username}
+                </Typography>
               )}
-            </form>
-
-
-          )
-        }
-        {checkAuth ?
-          <>
-            {parent == "user" && (
-              <Typography variant="h5" marginLeft="auto">
-                {username}
-              </Typography>
-            )}
-            {parent === "photo" && (
-              <Typography variant="h5" marginLeft="auto">
-                {"Photos of" + " " + username}
-              </Typography>
-            )}
-            <Button component={Link} to="/login" color="inherit" onClick={hanleLogout}>
-              Log out
-            </Button>
-          </>
-          :
-          <>
-            <Button component={Link} to="/login" color="inherit">
-              Login
-            </Button>
-            <Button component={Link} to="/register" color="inherit">
-              Register
-            </Button>
-          </>
-        }
+              {parent === "photo" && (
+                <Typography variant="h5" marginLeft="auto">
+                  {"Photos of" + " " + username}
+                </Typography>
+              )}
+              <Button component={Link} to="/login" color="inherit" onClick={hanleLogout} className="Button">
+                Log out
+              </Button>
+            </>
+            :
+            <>
+              <Button component={Link} to="/login" color="inherit" className="Button">
+                Login
+              </Button>
+              <Button component={Link} to="/register" color="inherit" className="Button">
+                Register
+              </Button>
+            </>
+          }
+        </Typography>
       </Toolbar>
     </AppBar>
   );

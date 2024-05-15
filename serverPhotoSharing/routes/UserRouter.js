@@ -19,6 +19,22 @@ const buildToken = (user) => {
 
 router.post("/", async (request, response) => { });
 
+router.post("/register", async (request, response) => {
+  const login_name = request.body.login_name;
+  const user = await User.findOne({ "login_name": login_name }).exec();
+  if (user) {
+    return response.status(409).send("Login name already exists");
+  }
+  try {
+    const user = new User(request.body);
+    const result = await user.save();
+    // const token = jwt.sign(buildToken(user), process.env.JWT_SECRET, { expiresIn: "3h" });
+    response.status(200).send(result);
+  } catch (err) {
+    response.status(500).send(err);
+  }
+});
+
 router.get("/list", async (request, response) => {
   try {
     const projection = '_id first_name last_name';
